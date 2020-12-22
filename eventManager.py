@@ -1,6 +1,7 @@
 #### IMPORTS ####
 import event_manager as EM
 
+
 #### CONSTANTS ####
 CURRENT_YEAR = 2020
 MIN_AGE = 16
@@ -168,10 +169,10 @@ def testPrintEventsList(file_path :str):
                     {"name" : "annual Rock & Metal party","id":2,"date":  EM.dateCreate(21, 4, 2021)}, \
                                  {"name" : "Improv","id":3,"date": EM.dateCreate(13, 3, 2021)}, \
                                      {"name" : "Student Festival","id":4,"date": EM.dateCreate(13, 5, 2021)},    ]
-    #em = printEventsList(events_lists,file_path)
+    em = printEventsList(events_lists,file_path)
     for event in events_lists:
         EM.dateDestroy(event["date"])
-    #EM.destroyEventManager(em)
+    EM.destroyEventManager(em)
 
 #### Main #### 
 # feel free to add more tests and change that section. 

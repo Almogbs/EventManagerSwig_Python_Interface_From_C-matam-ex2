@@ -1,9 +1,17 @@
 %module event_manager
+
 %{
+
 #include "date.h"
 #include "event_manager.h"
-#include <stdbool.h>
+
 %}
+
+typedef enum EventManagerResult_t EventManagerResult;
+
+typedef struct Date_t *Date;
+
+typedef struct EventManager_t* EventManager;
 
 
 EventManager createEventManager(Date date);
@@ -45,3 +53,4 @@ bool dateGet(Date date, int* day, int* month, int* year);
 int dateCompare(Date date1, Date date2);
 
 void dateTick(Date date);
+
