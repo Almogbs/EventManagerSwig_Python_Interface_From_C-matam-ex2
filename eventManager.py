@@ -43,7 +43,7 @@ def returnIdFromLine(line: list):
     return line[ID]
 
 def returnAgeFromLine(line: list):
-    return line[AGE]
+    return int(line[AGE])
 
 def fileToList(orig_file_path: str):
     orig_file = open(orig_file_path, 'r')
@@ -61,11 +61,11 @@ def fileToList(orig_file_path: str):
     return line_list
 
 def lineIsLegal(line: str):
-    if int(line[ID][0]) == INVALID_ID_FIRST or len(line[ID]) != ID_LEN:
+    if line[ID].isdigit() == False or line[ID][0] == INVALID_ID_FIRST or len(line[ID]) != ID_LEN:
         return False
-    elif int(line[SEMESTER][0]) < MIN_SEMESTER:
+    elif line[SEMESTER][0].isdigit() == False or int(line[SEMESTER][0]) < MIN_SEMESTER:
         return False
-    elif int(line[AGE]) > MAX_AGE or int(line[AGE]) < MIN_AGE:
+    elif line[AGE].isdigit() == False or int(line[AGE]) > MAX_AGE or int(line[AGE]) < MIN_AGE:
         return False
     elif CURRENT_YEAR - int(line[BIRTH_YEAR]) != int(line[AGE]):
         return False
@@ -84,7 +84,7 @@ def isInvalidName(name: str):
 
 def getStringFromLine(line: list):
     fixed_name = line[NAME].split()
-    fixed_semester = line[SEMESTER][0]
+    fixed_semester = line[SEMESTER][:-1]
     line[SEMESTER] = fixed_semester
     line[NAME] = ' '.join(fixed_name)
     legal_line = ', '.join(line)
@@ -104,8 +104,8 @@ def printYoungestStudents(in_file_path: str, out_file_path: str, k: int) -> int:
 
     fileCorrect(in_file_path, TEMP_OUT_FILE)
     line_list = fileToList(TEMP_OUT_FILE)
+    line_list.reverse()
     line_list.sort(key=returnAgeFromLine)
-
     i = 0
     for line in line_list:
         if i >= k:
@@ -129,12 +129,15 @@ def correctAgeAvg(in_file_path: str, semester: int) -> float:
     fileCorrect(in_file_path, TEMP_OUT_FILE)
     line_list = fileToList(TEMP_OUT_FILE)
     num_of_students = 0
-    sum = 0
+    sum = 0.0
     for line in line_list:
         if int(line[SEMESTER]) == semester:
             sum += int(line[AGE])
             num_of_students += 1
 
+    if num_of_students == 0:
+        return 0
+    
     return sum/num_of_students
 
     

@@ -1,8 +1,8 @@
 %module event_manager
-
 %{
 
 #include "date.h"
+#include <stdbool.h>
 #include "event_manager.h"
 
 %}
