@@ -25,19 +25,41 @@ def fileCorrect(orig_file_path: str, filtered_file_path: str):
     line_list = fileToList(orig_file_path)
     line_list.sort(key=returnIdFromLine)
 
-    i = 0
-    while i < len(line_list) - 1:
-        if line_list[i][ID] == line_list[i+1][ID]:
-            del line_list[i+1]
-        else:
-             i += 1
+    valid_list = getValidLinesFromList(line_list)
 
-    for line in line_list:
-        if lineIsLegal(line):                       
-            filtered_file.write(getStringFromLine(line))
-            filtered_file.write('\n')
+    i = 0
+    while i < len(valid_list) - 1:
+        if valid_list[i][ID] == valid_list[i+1][ID]:
+            del valid_list[i+1]
+        i += 1
     
+    for line in valid_list:                       
+        filtered_file.write(getStringFromLine(line))
+        filtered_file.write('\n')
+
     filtered_file.close()
+
+    # # # i = 0
+    # # # while i < len(line_list) - 1:
+    # # #     if not lineIsLegal(line_list[i]):
+    # # #         del line_list[i]
+    # # #     elif line_list[i][ID] == line_list[i+1][ID]:
+    # # #         del line_list[i+1]
+    # # #     i += 1
+
+    # # # for line in line_list:
+    # # #     if lineIsLegal(line):                       
+    # # #         filtered_file.write(getStringFromLine(line))
+    # # #         filtered_file.write('\n')
+    
+    
+def getValidLinesFromList(line_list: list):
+    valid_list = []
+    for line in line_list:
+        if lineIsLegal(line):
+            valid_list.append(line)
+
+    return valid_list
 
 def returnIdFromLine(line: list):
     return line[ID]
@@ -84,7 +106,10 @@ def isInvalidName(name: str):
 
 def getStringFromLine(line: list):
     fixed_name = line[NAME].split()
-    fixed_semester = line[SEMESTER][:-1]
+    if(len(line[SEMESTER]) == 1):
+        fixed_semester = line[SEMESTER]
+    else:
+        fixed_semester = line[SEMESTER][:-1]
     line[SEMESTER] = fixed_semester
     line[NAME] = ' '.join(fixed_name)
     legal_line = ', '.join(line)
