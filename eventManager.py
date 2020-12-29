@@ -14,7 +14,7 @@ AGE = 2
 BIRTH_YEAR = 3
 SEMESTER = 4
 INVALID_ID_FIRST = '0'
-TEMP_OUT_FILE = 'temp_out'
+
 
 #### PART 1 ####
 # Filters a file of students' subscription to specific event:
@@ -23,17 +23,8 @@ TEMP_OUT_FILE = 'temp_out'
 def fileCorrect(orig_file_path: str, filtered_file_path: str):
     filtered_file = open(filtered_file_path, 'w')
     line_list = fileToList(orig_file_path)
-    line_list.sort(key=returnIdFromLine)
-
-    valid_list = getValidLinesFromList(line_list)
-
-    i = 0
-    while i < len(valid_list) - 1:
-        if valid_list[i][ID] == valid_list[i+1][ID]:
-            del valid_list[i+1]
-        i += 1
     
-    for line in valid_list:                       
+    for line in line_list:                       
         filtered_file.write(getStringFromLine(line))
         filtered_file.write('\n')
 
@@ -66,7 +57,17 @@ def fileToList(orig_file_path: str):
         line_list.append(new_line)
 
     line_list.reverse()
-    return line_list
+    line_list.sort(key=returnIdFromLine)
+
+    valid_list = getValidLinesFromList(line_list)
+
+    i = 0
+    while i < len(valid_list) - 1:
+        if valid_list[i][ID] == valid_list[i+1][ID]:
+            del valid_list[i+1]
+        i += 1
+
+    return valid_list
 
 def lineIsLegal(line: str):
     if line[ID].isdigit() == False or line[ID][0] == INVALID_ID_FIRST or len(line[ID]) != ID_LEN:
@@ -90,19 +91,20 @@ def isInvalidName(name: str):
     
     return False
 
+def getCorrectName(raw_name : str):
+    fixed_name = raw_name.split()
+    final_name = ' '.join(fixed_name)
+    return final_name
+
 def getStringFromLine(line: list):
-    fixed_name = line[NAME].split()
-    #if(len(line[SEMESTER]) == 1):
-    #    fixed_semester = line[SEMESTER]
-    #else:
-    #    fixed_semester = line[SEMESTER][:-1]
+    fixed_name = getCorrectName(line[NAME])
     temp_semester = line[SEMESTER].split() 
     line[SEMESTER] = temp_semester[0]
-    line[NAME] = ' '.join(fixed_name)
+    line[NAME] = fixed_name
     legal_line = ', '.join(line)
     return legal_line
 
-    
+
     
 # Writes the names of the K youngest students which subscribed 
 # to the event correctly.
@@ -114,16 +116,14 @@ def printYoungestStudents(in_file_path: str, out_file_path: str, k: int) -> int:
 
     new_file = open(out_file_path, 'w')
 
-    fileCorrect(in_file_path, TEMP_OUT_FILE)
-    line_list = fileToList(TEMP_OUT_FILE)
-    line_list.reverse()
+    line_list = fileToList(in_file_path)
     line_list.sort(key=returnAgeFromLine)
     i = 0
     for line in line_list:
         if i >= k:
             break
         else:
-            new_file.write(line[NAME])
+            new_file.write(getCorrectName(line[NAME]))
             new_file.write('\n')
             i += 1
 
@@ -138,12 +138,13 @@ def printYoungestStudents(in_file_path: str, out_file_path: str, k: int) -> int:
 def correctAgeAvg(in_file_path: str, semester: int) -> float:
     if semester < MIN_SEMESTER:
         return -1
-    fileCorrect(in_file_path, TEMP_OUT_FILE)
-    line_list = fileToList(TEMP_OUT_FILE)
+    line_list = fileToList(in_file_path)
     num_of_students = 0
     sum = 0.0
     for line in line_list:
-        if int(line[SEMESTER]) == semester:
+        temp_semester = line[SEMESTER].split()
+        final_semester = temp_semester[0]
+        if int(final_semester) == semester:
             sum += int(line[AGE])
             num_of_students += 1
 
