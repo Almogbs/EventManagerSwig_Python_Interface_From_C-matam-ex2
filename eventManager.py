@@ -92,6 +92,10 @@ def isInvalidName(name: str):
 
 def getStringFromLine(line: list):
     fixed_name = line[NAME].split()
+    #if(len(line[SEMESTER]) == 1):
+    #    fixed_semester = line[SEMESTER]
+    #else:
+    #    fixed_semester = line[SEMESTER][:-1]
     temp_semester = line[SEMESTER].split() 
     line[SEMESTER] = temp_semester[0]
     line[NAME] = ' '.join(fixed_name)
@@ -169,7 +173,7 @@ def getFirstDate(events: list):
     for event in events:
         temp_date = event['date']
         if EM.dateCompare(date, temp_date) > 0:
-            date = new_date
+            date = temp_date
 
 
     return date
